@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Sawyer Watts",
+  "classifications": [ "Config" ],
+  "identity": "sawyereditorconfig",
+  "name": "Sawyer's EditorConfig",
+  "shortName": "sawyereditorconfig",
+  "sourceName": "SawyerCSharpEditorConfig",
+  "preferNameDirectory": true,
+  "description": "This builds off the `dotnet new editorconfig` to contain changes subject to my preferences.",
+  "tags": {
+    "language": "",
+    "type": "item"
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Sawyer",
+  "classifications": [ "Web", "Web API", "API", "Service" ],
+  "identity": "SawyerWebApi",
+  "name": "Sawyer's web API",
+  "shortName": "sawyerwebapi",
+  "sourceName": "SawyerCSharpWebApi",
+  "preferNameDirectory": true,
+  "description": "This is a template for the .NET SDK to make a slightly more batteries-included web API csproj, subject to my preferences.",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "symbols": {
+    "auth": {
+      "type": "parameter",
+      "description": "Authentication middleware",
+      "isRequired": true,
+      "datatype": "choice",
+      "choices": [
+        {
+          "choice": "apiKey",
+          "description": "Configure API key and require client authentication"
+        },
+        {
+          "choice": "jwt",
+          "description": "Configure JSON web token (JWT) and require client authentication"
+        },
+        {
+          "choice": "empty",
+          "description": "No authentication configured and require client authentication"
+        },
+        {
+          "choice": "none",
+          "description": "No authentication configured and clients do not need to authentication"
+        }
+      ]
+    },
+    "OnlyRequireAuth": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(auth == \"empty\")"
+    },
+    "UseApiKey": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(auth == \"apiKey\")"
+    },
+    "UseJwt": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(auth == \"jwt\")"
+    }
+  },
+  "sources": [
+    {
+      "modifiers": [
+        {
+          "condition": "(!UseApiKey)",
+          "exclude": [
+            "Middleware/ApiKeyAuthentication.cs"
+          ]
+        },
+        {
+          "condition": "(!UseJwt)",
+          "exclude": [
+            "Middleware/JwtAuthentication.cs"
+          ]
+        }
+      ]
+    }
+  ]
+}

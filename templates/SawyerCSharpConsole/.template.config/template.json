@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Sawyer Watts",
+  "classifications": [ "Common", "Console" ],
+  "identity": "sawyerconsole",
+  "name": "Sawyer's Console",
+  "shortName": "sawyerconsole",
+  "sourceName": "SawyerCSharpConsole",
+  "preferNameDirectory": true,
+  "description": "This is a template for the .NET SDK to make a slightly more batteries-included console csproj, subject to my preferences.",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  }
+}
