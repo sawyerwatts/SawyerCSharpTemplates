@@ -11,14 +11,13 @@ This is a companion to
 Here is the Bash to build and install this template from source:
 
 ```sh
-cwd=$(pwd)
 temp_dir=~/.sawyerCSharpTemplatesTemp
 git clone https://github.com/sawyerwatts/SawyerCSharpTemplates $temp_dir
 cd $temp_dir
 dotnet pack -c Release -o out
 dotnet new install out/*.nupkg
-cd $cwd
-rm -rf temp_dir
+cd -
+rm -rf $temp_dir
 ```
 
 ## Uninstalling
