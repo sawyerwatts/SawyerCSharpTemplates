@@ -16,15 +16,15 @@ namespace SawyerCSharpWebApi.Middleware;
 /// POST requests are not idempotent, but a variety of events can occur when
 /// making a POST request that can cause ambiguity on the success of the
 /// request (such as a network error on the response trip). As such, this
-/// middleware assists with this problem by requiring a <see cref="ClientIdempotencyKeyHeader"/>
+/// middleware assists with this problem by requiring a <see cref="ClientIdempotencyTokenHeader"/>
 /// when making POST requests so then clients can resend POST requests with
 /// confidence that exactly-once semantics are maintained; upon subsequent
 /// POSTs, <see cref="HttpStatusCode.Conflict"/> is returned.
 /// </summary>
 /// <remarks>
-/// The client's idempotency key has the following restrictions:
-/// <br /> 1. It must be at least <see cref="Settings.UserKeyMinLength"/>.
-/// <br /> 2. It must be at least <see cref="Settings.UserKeyMaxLength"/>.
+/// The client's idempotency token has the following restrictions:
+/// <br /> 1. It must be at least <see cref="Settings.UserTokenMinLength"/>.
+/// <br /> 2. It must be at least <see cref="Settings.UserTokenMaxLength"/>.
 /// <br /> 3. It must not contain any '|'s.
 /// <br />
 /// This middleware requires the <see cref="HttpContext.User"/>'s
@@ -60,8 +60,8 @@ public class IdempotentPosts : IMiddleware
     /// <remarks>
     /// Not suitable for sensitive data.
     /// </remarks>
-    private const string ClientIdempotencyKeyHeader = "X-Idempotency-Key";
-    private const string ExpiresHeader = "X-Idempotency-Key-Expires";
+    private const string ClientIdempotencyTokenHeader = "X-Idempotency-Token";
+    private const string ExpiresHeader = "X-Idempotency-Token-Expires";
 
     public async Task InvokeAsync(
         HttpContext context,
@@ -77,47 +77,47 @@ public class IdempotentPosts : IMiddleware
             return;
         }
 
-        StringValues rawClientIdempotencyKey;
-        if (!context.Request.Headers.TryGetValue(ClientIdempotencyKeyHeader, out rawClientIdempotencyKey)
-            || string.IsNullOrWhiteSpace(rawClientIdempotencyKey))
+        StringValues rawClientIdempotencyToken;
+        if (!context.Request.Headers.TryGetValue(ClientIdempotencyTokenHeader, out rawClientIdempotencyToken)
+            || string.IsNullOrWhiteSpace(rawClientIdempotencyToken))
         {
             _logger.LogInformation(
-                "When making POST requests, header {KeyHeader} must be supplied with a value that is not null or whitespace",
-                ClientIdempotencyKeyHeader);
+                "When making POST requests, header {TokenHeader} must be supplied with a value that is not null or whitespace",
+                ClientIdempotencyTokenHeader);
             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
             context.Response.ContentType = "text/plain";
             await context.Response.WriteAsync(
-                $"When making POST requests, header '{ClientIdempotencyKeyHeader}' must be supplied with a value that is not null or whitespace",
+                $"When making POST requests, header '{ClientIdempotencyTokenHeader}' must be supplied with a value that is not null or whitespace",
                 context.RequestAborted);
             return;
         }
 
-        string clientIdempotencyKey = rawClientIdempotencyKey.First()!;
-        if (clientIdempotencyKey.Length < _settings.UserKeyMinLength ||
-            clientIdempotencyKey.Length > _settings.UserKeyMaxLength)
+        string clientIdempotencyToken = rawClientIdempotencyToken.First()!;
+        if (clientIdempotencyToken.Length < _settings.UserTokenMinLength ||
+            clientIdempotencyToken.Length > _settings.UserTokenMaxLength)
         {
             _logger.LogInformation(
-                "Value for header {KeyHeader} is too long or too short, it must be at least {UserKeyMinLength} and at most {UserKeyMaxLength} characters",
-                ClientIdempotencyKeyHeader,
-                _settings.UserKeyMinLength,
-                _settings.UserKeyMaxLength);
+                "Value for header {TokenHeader} is too long or too short, it must be at least {UserTokenMinLength} and at most {UserTokenMaxLength} characters",
+                ClientIdempotencyTokenHeader,
+                _settings.UserTokenMinLength,
+                _settings.UserTokenMaxLength);
             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
             context.Response.ContentType = "text/plain";
             await context.Response.WriteAsync(
-                $"Value for header '{ClientIdempotencyKeyHeader}' too long or too short, it must be at least {_settings.UserKeyMinLength} and at most {_settings.UserKeyMaxLength} characters",
+                $"Value for header '{ClientIdempotencyTokenHeader}' too long or too short, it must be at least {_settings.UserTokenMinLength} and at most {_settings.UserTokenMaxLength} characters",
                 context.RequestAborted);
             return;
         }
 
-        if (clientIdempotencyKey.Contains("|"))
+        if (clientIdempotencyToken.Contains("|"))
         {
             _logger.LogInformation(
-                "Value for header {KeyHeader} contains '|', which is not allowed",
-                ClientIdempotencyKeyHeader);
+                "Value for header {TokenHeader} contains '|', which is not allowed",
+                ClientIdempotencyTokenHeader);
             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
             context.Response.ContentType = "text/plain";
             await context.Response.WriteAsync(
-                $"Value for header {ClientIdempotencyKeyHeader} contains '|', which is not allowed",
+                $"Value for header {ClientIdempotencyTokenHeader} contains '|', which is not allowed",
                 context.RequestAborted);
             return;
         }
@@ -133,41 +133,41 @@ public class IdempotentPosts : IMiddleware
         }
 
         string path = context.Request.Path.ToString().ToLower();
-        string cacheKey = path + "|" + clientIdempotencyKey + "|" + clientIdentity;
+        string cacheToken = path + "|" + clientIdempotencyToken + "|" + clientIdentity;
 
         DateTime? storedExpires = await _cache.ContainsAsync(
-            cacheKey,
+            cacheToken,
             context.RequestAborted);
         if (storedExpires is not null)
         {
             _logger.LogInformation(
-                "Will not repeat a POST operation for key '{Key}' and path '{Path}'; the existing pair will expire at {Expires}",
-                clientIdempotencyKey,
+                "Will not repeat a POST operation for token '{Token}' and path '{Path}'; the existing pair will expire at {Expires}",
+                clientIdempotencyToken,
                 path,
                 storedExpires);
             context.Response.StatusCode = (int)HttpStatusCode.Conflict;
             context.Response.ContentType = "application/json";
             await context.Response.WriteAsJsonAsync(
-                new FoundActiveKey(
-                    Message: FoundActiveKey.DefaultMessage,
+                new FoundActiveToken(
+                    Message: FoundActiveToken.DefaultMessage,
                     Uri: path,
-                    ClientIdempotencyKey: clientIdempotencyKey,
+                    ClientIdempotencyToken: clientIdempotencyToken,
                     ClientIdentity: clientIdentity,
                     Expires: storedExpires.Value));
             return;
         }
 
         DateTime expires = DateTime.Now.AddHours(
-            _settings.KeyExpirationHours);
+            _settings.TokenExpirationHours);
         _logger.LogInformation(
-            "POST tentatively has user key '{Key}' for path '{Path}' with expiration {Expires}; will consider caching on response",
-            clientIdempotencyKey,
+            "POST tentatively has user token '{Token}' for path '{Path}' with expiration {Expires}; will consider caching on response",
+            clientIdempotencyToken,
             path,
             expires);
 
         context.Response.Headers.Append(
-            key: ClientIdempotencyKeyHeader,
-            value: clientIdempotencyKey);
+            key: ClientIdempotencyTokenHeader,
+            value: clientIdempotencyToken);
         context.Response.Headers.Append(
             key: ExpiresHeader,
             value: expires.ToString("o", CultureInfo.InvariantCulture));
@@ -175,28 +175,28 @@ public class IdempotentPosts : IMiddleware
 
         if (context.Response.StatusCode >= 300)
         {
-            _logger.LogInformation("Not caching key, response's status code is at least 300");
+            _logger.LogInformation("Not caching token, response's status code is at least 300");
             return;
         }
 
         _logger.LogInformation("Caching");
         await _cache.InsertAsync(
-            cacheKey,
+            cacheToken,
             expires,
             context.RequestAborted);
     }
 
-    private record FoundActiveKey(
+    private record FoundActiveToken(
         string Message,
         string Uri,
-        string ClientIdempotencyKey,
+        string ClientIdempotencyToken,
         string ClientIdentity,
         DateTime Expires)
     {
         public const string DefaultMessage =
-            "There is an existing key for this URI that has not yet expired. "
+            "There is an existing token for this URI that has not yet expired. "
             + "The server will not repeat this idempotent operation, at least "
-            + "not until the client's existing idempotency key against the "
+            + "not until the client's existing idempotency token against the "
             + "target URI has expired.";
     }
 
@@ -221,7 +221,7 @@ public class IdempotentPosts : IMiddleware
             operation.Parameters ??= [];
             operation.Parameters.Add(new OpenApiParameter
             {
-                Name = ClientIdempotencyKeyHeader,
+                Name = ClientIdempotencyTokenHeader,
                 In = ParameterLocation.Header,
                 Required = true,
                 Schema = new OpenApiSchema
@@ -235,13 +235,13 @@ public class IdempotentPosts : IMiddleware
     public class Settings
     {
         [Range(1, 24 * 7)]
-        public int KeyExpirationHours { get; set; }
+        public int TokenExpirationHours { get; set; }
 
         [Range(1, 128)]
-        public int UserKeyMinLength { get; set; }
+        public int UserTokenMinLength { get; set; }
 
         [Range(1, 128)]
-        public int UserKeyMaxLength { get; set; }
+        public int UserTokenMaxLength { get; set; }
     }
 }
 
@@ -252,16 +252,16 @@ public partial class ValidateIdempotentPostsSettings
 /// <remarks>
 /// Be sure implementations will clean themselves out, and when the data isn't
 /// immediately removed upon expires, then they will need to exclude no
-/// longer active keys when searching the cache.
+/// longer active tokens when searching the cache.
 /// </remarks>
 public interface IIdempotentPostsCache
 {
     Task<DateTime?> ContainsAsync(
-        string key,
+        string token,
         CancellationToken cancellationToken);
 
     Task InsertAsync(
-        string key,
+        string token,
         DateTime expires,
         CancellationToken cancellationToken);
 }
@@ -278,35 +278,35 @@ public class IdempotentPostsInMemoryCache : IIdempotentPostsCache
         _memoryCache = new MemoryCache(
             new MemoryCacheOptions()
             {
-                SizeLimit = settings.Value.KeyLimit,
+                SizeLimit = settings.Value.TokenLimit,
                 ExpirationScanFrequency = TimeSpan.FromSeconds(
                     settings.Value.ExpirationScanFrequencySec),
             });
     }
 
     public Task<DateTime?> ContainsAsync(
-        string key,
+        string token,
         CancellationToken cancellationToken)
     {
         DateTime? result = null;
-        if (_memoryCache.TryGetValue(key, out DateTime expires))
+        if (_memoryCache.TryGetValue(token, out DateTime expires))
             result = expires;
         return Task.FromResult(result);
     }
 
     /// <remarks>
-    /// Be warned: if the <see cref="Settings.KeyLimit"/> is reached, inserts
+    /// Be warned: if the <see cref="Settings.TokenLimit"/> is reached, inserts
     /// will silently fail until the
     /// <see cref="Settings.ExpirationScanFrequencySec"/> timer cleans out
-    /// expired keys.
+    /// expired tokens.
     /// </remarks>
     public Task InsertAsync(
-        string key,
+        string token,
         DateTime expires,
         CancellationToken cancellationToken)
     {
         _memoryCache.Set(
-            key: key,
+            key: token,
             value: expires,
             options: new MemoryCacheEntryOptions()
             {
@@ -331,9 +331,9 @@ public class IdempotentPostsInMemoryCache : IIdempotentPostsCache
     public class Settings
     {
         /// <summary>
-        /// The number of seconds that the idempotency key should be cached in
+        /// The number of seconds that the idempotency token should be cached in
         /// memory. Critically, this is in units second while
-        /// <see cref="IdempotentPosts.Settings.KeyExpirationHours"/> is in
+        /// <see cref="IdempotentPosts.Settings.TokenExpirationHours"/> is in
         /// hours because it could be argued that the retry will come quickly
         /// after the (presumed) network failure, so this better anticipates
         /// realistic timeframes to more aggressively control memory usage
@@ -343,7 +343,7 @@ public class IdempotentPostsInMemoryCache : IIdempotentPostsCache
         public int CacheSec { get; set; }
 
         [Range(1, 4096)]
-        public int KeyLimit { get; set; }
+        public int TokenLimit { get; set; }
 
         [Range(1, 60 * 60)]
         public int ExpirationScanFrequencySec { get; set; }

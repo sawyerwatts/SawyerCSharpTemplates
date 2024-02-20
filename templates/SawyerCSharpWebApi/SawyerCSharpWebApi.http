@@ -22,7 +22,7 @@ Accept: application/json
 Authorization: Bearer {{jwt}}
 X-API-Key: {{apiKey}}
 X-Trace-GUID: 35e42316-319b-4808-b045-96f4ab58d328
-X-Idempotency-Key: sawyersawyer3
+X-Idempotency-Token: sawyersawyer3
 
 {
   "N": 3

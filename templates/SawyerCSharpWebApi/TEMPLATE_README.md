@@ -66,8 +66,8 @@ fullfilled. PUTs are preferable for this reason, but PUTs are not always
 possible.
 
 This template will, via the `IdempotentPosts` class, configure middleware to
-require a `X-Idempotency-Key` request header. This allows the template to cache
-the client's idempotency key (plus their identity and the endpoint they are
+require a `X-Idempotency-Token` request header. This allows the template to cache
+the client's idempotency token (plus their identity and the endpoint they are
 POSTing to) in order to achieve exactly once semantics for a configurable
 period of time. With this middleware,
 clients can confidently resubmit (within that configurable timeframe) as many
@@ -180,7 +180,7 @@ exists. Here is the list of middleware to hopefully remove from this template:
 
 If POSTs are in scope for the API, removing that middleware would be prudent.
 Otherwise, the current implementation only uses an in memory cache to store its
-idempotency keys. Depending on your environment, it may be mildly to severely
+idempotency tokens. Depending on your environment, it may be mildly to severely
 critical to supplement that type with a persistance/distributed cache and/or
 sticky sessions.
 
