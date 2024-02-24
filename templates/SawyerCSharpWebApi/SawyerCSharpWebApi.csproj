@@ -7,6 +7,7 @@
     <InvariantGlobalization>true</InvariantGlobalization>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <UserSecretsId>d4a584ec-fad4-45aa-95c3-0cc43c683add</UserSecretsId>
   </PropertyGroup>
 
@@ -22,10 +23,6 @@
     <PackageReference Include="serilog.sinks.console" Version="5.0.1" />
     <PackageReference Include="serilog.sinks.file" Version="5.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Logs\On-20240107.json" />
   </ItemGroup>
 
 </Project>
