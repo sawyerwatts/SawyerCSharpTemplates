@@ -21,6 +21,7 @@ public class Driver
         CancellationToken cancellationToken)
     {
         // TODO: start coding here
+        _logger.LogInformation("Start coding here");
         return Task.CompletedTask;
     }
 

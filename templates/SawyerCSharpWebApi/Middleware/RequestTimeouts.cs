@@ -10,7 +10,13 @@ namespace SawyerCSharpWebApi.Middleware;
 /// Note that the .NET middleware will throw an
 /// <see cref="OperationCanceledException"/> when the timeout is reached.
 /// </remarks>
+// CA1052: Classes with only static members should be static as well, but this
+// class needs to not be static since ILogger<RequestTimeouts> needs a
+// non-static class.
+#pragma warning disable CA1052
 public class RequestTimeouts
+#pragma warning restore CA1052
+
 {
     /// <remarks>
     /// Don't forget to use this middleware via <see cref="RequestTimeoutsIApplicationBuilderExtensions.UseRequestTimeouts"/>.

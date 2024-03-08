@@ -20,7 +20,7 @@ try
     // 2. Update cancellation token on first interception of interrupt signal.
     //     1. Force-closing the app on second interception of interrupt signal.
     //     2. Else, after five seconds, force-close the app.
-    CancellationTokenSource source = new();
+    using CancellationTokenSource source = new();
     bool graceful = true;
     Console.CancelKeyPress += new ConsoleCancelEventHandler((
         _,
@@ -33,6 +33,9 @@ try
             source.Cancel();
             cancelEvent.Cancel = true;
             graceful = false;
+            // CA1806: Instance is never used, but that's fine since it will
+            // still handle the delay before exiting.
+#pragma warning disable CA1806
             new Timer(
                 _ =>
                 {
@@ -42,6 +45,7 @@ try
                 state: null,
                 dueTime: 5000,
                 period: 0);
+#pragma warning restore CA1806
         }
         else
         {

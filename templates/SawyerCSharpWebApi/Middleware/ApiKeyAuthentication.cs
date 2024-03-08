@@ -109,7 +109,7 @@ public class ApiKeyAuthentication
                         Id = "apiKey",
                     }
                 },
-                new string[] { }
+                Array.Empty<string>()
             }
         });
     }

@@ -25,4 +25,10 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <AnalysisMode>Recommended</AnalysisMode>
+    <AnalysisModeSecurity>All</AnalysisModeSecurity>
+    <AnalysisModeReliability>All</AnalysisModeReliability>
+  </PropertyGroup>
+
 </Project>

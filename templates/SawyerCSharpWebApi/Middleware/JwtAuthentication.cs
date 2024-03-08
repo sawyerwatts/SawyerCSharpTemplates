@@ -10,7 +10,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SawyerCSharpWebApi.Middleware;
 
-public class JwtAuthentication
+public static class JwtAuthentication
 {
     public const string AuthScheme = "jwt";
 
@@ -89,7 +89,7 @@ public class JwtAuthentication
                         Id = "bearerAuth",
                     }
                 },
-                new string[] { }
+                Array.Empty<string>()
             }
         });
     }

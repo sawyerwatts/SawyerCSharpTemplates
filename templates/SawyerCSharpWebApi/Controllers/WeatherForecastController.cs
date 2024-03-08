@@ -51,8 +51,8 @@ public class WeatherForecastController : ControllerBase
             Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 DateTime = DateTime.Now,
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+                TemperatureC = -20,
+                Summary = Summaries[0]
             })
                 .ToArray());
         return Task.FromResult(resp);
@@ -99,7 +99,7 @@ public class WeatherForecastController : ControllerBase
     [AllowAnonymous]
     public ActionResult Crash()
     {
-        throw new Exception("some server error, IDK");
+        throw new InvalidOperationException("some server error, IDK");
     }
 
     /// <summary>

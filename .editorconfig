@@ -22,6 +22,18 @@ end_of_line = crlf
 insert_final_newline = true
 
 
+#### Analyzer changes ####
+
+# CA1052: Classes with only static members should be made static as well.
+dotnet_diagnostic.CA1052.severity = warning
+
+# CA2007: Call ConfigureAwait on all tasks (only applicable to libraries).
+dotnet_diagnostic.CA2007.severity = none
+
+# CA1848: More performant logging.
+dotnet_diagnostic.CA1848.severity = suggestion
+
+
 #### .NET Coding Conventions ####
 [*.{cs,vb}]
 

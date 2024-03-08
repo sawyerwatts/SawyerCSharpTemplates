@@ -20,4 +20,10 @@
     <PackageReference Include="serilog.sinks.file" Version="5.0.0" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <AnalysisMode>Recommended</AnalysisMode>
+    <AnalysisModeSecurity>All</AnalysisModeSecurity>
+    <AnalysisModeReliability>All</AnalysisModeReliability>
+  </PropertyGroup>
+
 </Project>

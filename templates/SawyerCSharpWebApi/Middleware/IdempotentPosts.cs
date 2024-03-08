@@ -109,7 +109,7 @@ public class IdempotentPosts : IMiddleware
             return;
         }
 
-        if (clientIdempotencyToken.Contains("|"))
+        if (clientIdempotencyToken.Contains('|'))
         {
             _logger.LogInformation(
                 "Value for header {TokenHeader} contains '|', which is not allowed",
@@ -186,7 +186,7 @@ public class IdempotentPosts : IMiddleware
             context.RequestAborted);
     }
 
-    private record FoundActiveToken(
+    private readonly record struct FoundActiveToken(
         string Message,
         string Uri,
         string ClientIdempotencyToken,
@@ -206,7 +206,7 @@ public class IdempotentPosts : IMiddleware
         options.OperationFilter<HeaderSwaggerFilter>();
     }
 
-    private class HeaderSwaggerFilter : IOperationFilter
+    private sealed class HeaderSwaggerFilter : IOperationFilter
     {
         public void Apply(
             OpenApiOperation operation,
@@ -266,9 +266,9 @@ public interface IIdempotentPostsCache
         CancellationToken cancellationToken);
 }
 
-public class IdempotentPostsInMemoryCache : IIdempotentPostsCache
+public class IdempotentPostsInMemoryCache : IIdempotentPostsCache, IDisposable
 {
-    private readonly IMemoryCache _memoryCache;
+    private readonly MemoryCache _memoryCache;
     private readonly Settings _settings;
 
     public IdempotentPostsInMemoryCache(
@@ -347,6 +347,12 @@ public class IdempotentPostsInMemoryCache : IIdempotentPostsCache
 
         [Range(1, 60 * 60)]
         public int ExpirationScanFrequencySec { get; set; }
+    }
+
+    public void Dispose()
+    {
+        _memoryCache.Dispose();
+        GC.SuppressFinalize(this);
     }
 }
 

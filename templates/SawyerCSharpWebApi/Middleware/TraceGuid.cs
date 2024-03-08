@@ -131,7 +131,7 @@ public class TraceGuid
         options.OperationFilter<HeaderSwaggerFilter>();
     }
 
-    private class HeaderSwaggerFilter : IOperationFilter
+    private sealed class HeaderSwaggerFilter : IOperationFilter
     {
         public void Apply(
             OpenApiOperation operation,
