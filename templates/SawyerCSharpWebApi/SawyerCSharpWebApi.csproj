@@ -26,9 +26,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <AnalysisMode>Recommended</AnalysisMode>
-    <AnalysisModeSecurity>All</AnalysisModeSecurity>
-    <AnalysisModeReliability>All</AnalysisModeReliability>
+    <AnalysisMode>All</AnalysisMode>
   </PropertyGroup>
 
 </Project>

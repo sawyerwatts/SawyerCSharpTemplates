@@ -177,5 +177,8 @@ catch (Exception exc)
 }
 finally
 {
+    // CA1849 wants to async-ly flush, which would end the program.
+#pragma warning disable CA1849
     Log.CloseAndFlush();
+#pragma warning restore CA1849
 }

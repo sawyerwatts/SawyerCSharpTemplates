@@ -266,7 +266,7 @@ public interface IIdempotentPostsCache
         CancellationToken cancellationToken);
 }
 
-public class IdempotentPostsInMemoryCache : IIdempotentPostsCache, IDisposable
+public sealed class IdempotentPostsInMemoryCache : IIdempotentPostsCache, IDisposable
 {
     private readonly MemoryCache _memoryCache;
     private readonly Settings _settings;
@@ -352,7 +352,6 @@ public class IdempotentPostsInMemoryCache : IIdempotentPostsCache, IDisposable
     public void Dispose()
     {
         _memoryCache.Dispose();
-        GC.SuppressFinalize(this);
     }
 }
 

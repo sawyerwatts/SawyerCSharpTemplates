@@ -23,15 +23,42 @@ insert_final_newline = true
 
 
 #### Analyzer changes ####
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/
 
-# CA1052: Classes with only static members should be made static as well.
+# More performant logging (via LoggerMessage delegates or source generation)
+dotnet_diagnostic.CA1848.severity = suggestion
+
+# Static holder types should be Static or NotInheritable
 dotnet_diagnostic.CA1052.severity = warning
 
-# CA2007: Call ConfigureAwait on all tasks (only applicable to libraries).
+# Do not directly await a Task (only applicable to libraries)
 dotnet_diagnostic.CA2007.severity = none
 
-# CA1848: More performant logging.
-dotnet_diagnostic.CA1848.severity = suggestion
+# Validate arguments of public methods (only applicable to libraries)
+dotnet_diagnostic.CA1062.severity = none
+
+# Avoid uninstantiated internal classes
+dotnet_diagnostic.CA1812.severity = suggestion
+
+# Nested types should not be visible
+dotnet_diagnostic.CA1034.severity = none
+
+# Type names should not match namespaces
+# (This most commonly occurs when Sawyer makes a nested Settings class since
+# Settings is a subnamespace in Serilog).
+dotnet_diagnostic.CA1724.severity = suggestion
+
+# Implement standard exception constructors
+dotnet_diagnostic.CA1032.severity = suggestion
+
+# Do not expose generic lists
+dotnet_diagnostic.CA1002.severity = suggestion
+
+# Collection properties should be read only
+dotnet_diagnostic.CA2227.severity = suggestion
+
+# Result should override Equals, ==, and !=
+dotnet_diagnostic.CA1815.severity = none
 
 
 #### .NET Coding Conventions ####
