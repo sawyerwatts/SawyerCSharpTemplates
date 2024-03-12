@@ -88,7 +88,10 @@ builder.Services.AddSwaggerGen(options =>
     {
         Version = "v1",
         Title = "SawyerCSharpWebApi",
-        Description = "",
+        Description =
+            """
+            Note that 410: Gone is used instead of 404: Not Found when an entity does not exist at a valid URL.
+            """,
     });
 
     string xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
