@@ -9,6 +9,7 @@
     <NoWarn>$(NoWarn);1591</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <UserSecretsId>d4a584ec-fad4-45aa-95c3-0cc43c683add</UserSecretsId>
+    <AnalysisMode>All</AnalysisMode>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,9 +25,5 @@
     <PackageReference Include="serilog.sinks.file" Version="5.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
-
-  <PropertyGroup>
-    <AnalysisMode>All</AnalysisMode>
-  </PropertyGroup>
 
 </Project>

@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AnalysisMode>All</AnalysisMode>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,9 +20,5 @@
     <PackageReference Include="serilog.sinks.console" Version="5.0.1" />
     <PackageReference Include="serilog.sinks.file" Version="5.0.0" />
   </ItemGroup>
-
-  <PropertyGroup>
-    <AnalysisMode>All</AnalysisMode>
-  </PropertyGroup>
 
 </Project>
