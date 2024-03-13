@@ -57,7 +57,7 @@ dotnet_diagnostic.CA1002.severity = suggestion
 # Collection properties should be read only
 dotnet_diagnostic.CA2227.severity = suggestion
 
-# Result should override Equals, ==, and !=
+# Non-blittable types should override Equals, ==, and !=
 dotnet_diagnostic.CA1815.severity = none
 
 
