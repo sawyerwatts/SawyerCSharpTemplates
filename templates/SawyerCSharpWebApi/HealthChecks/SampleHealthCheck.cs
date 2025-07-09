@@ -10,7 +10,6 @@ public class SampleHealthCheck : IHealthCheck
     {
         try
         {
-            var stream = new MemoryStream();
             return Task.FromResult(HealthCheckResult.Healthy());
         }
         // All exceptions (except a cancellation exception) will be caught by
