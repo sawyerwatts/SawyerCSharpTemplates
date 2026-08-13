@@ -14,6 +14,7 @@ Here is the Bash to build and install this template from source:
 temp_dir=~/.sawyerCSharpTemplatesTemp
 git clone https://github.com/sawyerwatts/SawyerCSharpTemplates $temp_dir
 cd $temp_dir
+cp ./templates/SawyerCSharpEditorConfig/.editorconfig .
 dotnet pack -c Release -o out
 dotnet new install out/*.nupkg
 cd -
