@@ -42,6 +42,20 @@ request's identity to the configured identity.
 This class will tell the SwaggerGen that this authentication format is
 required.
 
+Here's an example `appsettings*.json` value to give `Sawyer` an API key of `12345`:
+
+```json
+{
+  "Middleware": {
+    "ApiKeyAuthentication": {
+      "ApiKeyToIdentityName": {
+        "12345": "Sawyer"
+      }
+    }
+  }
+}
+```
+
 #### JWT Authentication
 
 This template will, via the `JwtAuthentication` class, validate that the JWT:

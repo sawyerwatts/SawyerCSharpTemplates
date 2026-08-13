@@ -124,30 +124,21 @@ public class TraceGuid
             await next(context);
     }
 
-    public static void SetupSwaggerGen(
-        SwaggerGenOptions options)
+    public static Task SetupOpenApi(OpenApiOperation operation)
     {
-        options.OperationFilter<HeaderSwaggerFilter>();
-    }
-
-    private sealed class HeaderSwaggerFilter : IOperationFilter
-    {
-        public void Apply(
-            OpenApiOperation operation,
-            OperationFilterContext context)
+        operation.Parameters ??= [];
+        operation.Parameters.Add(new OpenApiParameter
         {
-            operation.Parameters ??= [];
-            operation.Parameters.Add(new OpenApiParameter
+            Name = Header,
+            In = ParameterLocation.Header,
+            Required = false,
+            Schema = new OpenApiSchema
             {
-                Name = Header,
-                In = ParameterLocation.Header,
-                Required = false,
-                Schema = new OpenApiSchema
-                {
-                    Type = JsonSchemaType.String
-                }
-            });
-        }
+                Type = JsonSchemaType.String
+            }
+        });
+
+        return Task.CompletedTask;
     }
 
     public class Settings

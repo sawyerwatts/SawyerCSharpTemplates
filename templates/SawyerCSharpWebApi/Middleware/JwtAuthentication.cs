@@ -65,24 +65,28 @@ public static class JwtAuthentication
             });
     }
 
-    public static void SetupSwaggerGen(
-        SwaggerGenOptions options)
+    public static Task SetupOpenApi(OpenApiDocument document)
     {
-        options.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
+        document.Components ??= new OpenApiComponents();
+        document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
+        document.Components.SecuritySchemes.Add("bearer",
+            new OpenApiSecurityScheme
+            {
+                Description = "JWT authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                BearerFormat = "JWT",
+            });
+
+        document.Security ??= [];
+        document.Security.Add(new OpenApiSecurityRequirement()
         {
-            Description = "JWT authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
-            Name = "Authorization",
-            In = ParameterLocation.Header,
-            Type = SecuritySchemeType.Http,
-            Scheme = "bearer",
-            BearerFormat = "JWT",
+            [new OpenApiSecuritySchemeReference("bearer", document)] = []
         });
 
-        options.AddSecurityRequirement(doc =>
-            new OpenApiSecurityRequirement()
-            {
-                [new OpenApiSecuritySchemeReference("bearer", doc)] = []
-            });
+        return Task.CompletedTask;
     }
 
     public class Settings

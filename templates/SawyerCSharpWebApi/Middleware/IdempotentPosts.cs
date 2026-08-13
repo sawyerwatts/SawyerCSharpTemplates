@@ -200,36 +200,27 @@ public class IdempotentPosts : IMiddleware
             + "target URI has expired.";
     }
 
-    public static void SetupSwaggerGen(
-        SwaggerGenOptions options)
+    public static Task SetupOpenApi(OpenApiOperation operation, OpenApiOperationTransformerContext context)
     {
-        options.OperationFilter<HeaderSwaggerFilter>();
-    }
-
-    private sealed class HeaderSwaggerFilter : IOperationFilter
-    {
-        public void Apply(
-            OpenApiOperation operation,
-            OperationFilterContext context)
+        if (context.Description.HttpMethod
+                ?.Equals("POST", StringComparison.OrdinalIgnoreCase) is not true)
         {
-            if (context.ApiDescription.HttpMethod
-                    ?.Equals("POST", StringComparison.OrdinalIgnoreCase) is not true)
-            {
-                return;
-            }
-
-            operation.Parameters ??= [];
-            operation.Parameters.Add(new OpenApiParameter
-            {
-                Name = ClientIdempotencyTokenHeader,
-                In = ParameterLocation.Header,
-                Required = true,
-                Schema = new OpenApiSchema
-                {
-                    Type = JsonSchemaType.String
-                }
-            });
+            return Task.CompletedTask;
         }
+
+        operation.Parameters ??= [];
+        operation.Parameters.Add(new OpenApiParameter
+        {
+            Name = ClientIdempotencyTokenHeader,
+            In = ParameterLocation.Header,
+            Required = true,
+            Schema = new OpenApiSchema
+            {
+                Type = JsonSchemaType.String
+            }
+        });
+
+        return Task.CompletedTask;
     }
 
     public class Settings

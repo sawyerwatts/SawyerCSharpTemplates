@@ -10,8 +10,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using Microsoft.OpenApi;
 
-using Swashbuckle.AspNetCore.SwaggerGen;
-
 namespace SawyerCSharpWebApi.Middleware;
 
 public class ApiKeyAuthentication
@@ -86,23 +84,27 @@ public class ApiKeyAuthentication
                 options => options.ApiKeyToIdentityName = settings.ApiKeyToIdentityName);
     }
 
-    public static void SetupSwaggerGen(
-        SwaggerGenOptions options)
+    public static Task SetupOpenApi(OpenApiDocument document)
     {
-        options.AddSecurityDefinition("apiKey", new OpenApiSecurityScheme
+        document.Components ??= new OpenApiComponents();
+        document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
+        document.Components.SecuritySchemes.Add("apiKey",
+            new OpenApiSecurityScheme
+            {
+                Name = Header,
+                Type = SecuritySchemeType.ApiKey,
+                In = ParameterLocation.Header,
+                Description = $"API key authorization header. Example: \"{Header}: {{token}}\"",
+                Scheme = "apiKey",
+            });
+
+        document.Security ??= [];
+        document.Security.Add(new OpenApiSecurityRequirement()
         {
-            Name = Header,
-            Type = SecuritySchemeType.ApiKey,
-            In = ParameterLocation.Header,
-            Description = $"API key authorization header. Example: \"{Header}: {{token}}\"",
-            Scheme = "apiKey",
+            [new OpenApiSecuritySchemeReference("apiKey", document)] = []
         });
 
-        options.AddSecurityRequirement(doc =>
-            new OpenApiSecurityRequirement()
-            {
-                [new OpenApiSecuritySchemeReference("apiKey", doc)] = []
-            });
+        return Task.CompletedTask;
     }
 
     public class Settings : AuthenticationSchemeOptions

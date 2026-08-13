@@ -84,33 +84,32 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
-builder.Services.AddSwaggerGen(options =>
+builder.Services.AddOpenApi(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo()
+    options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_1;
+    options.AddDocumentTransformer((document, context, ct) =>
     {
-        Version = "v1",
-        Title = "SawyerCSharpWebApi",
-        Description =
-            """
-            Note that 410: Gone is used instead of 404: Not Found when an entity does not exist at a valid URL.
-            """,
+        document.Info = new()
+        {
+            Version = "v1",
+            Title = "SawyerCSharpWebApi",
+            Description =
+                """
+                Note that 410: Gone is used instead of 404: Not Found when an entity does not exist at a valid URL.
+                """,
+        };
+        return Task.CompletedTask;
     });
 
-    string xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-
-    IdempotentPosts.SetupSwaggerGen(options);
-    TraceGuid.SetupSwaggerGen(options);
+    options.AddOperationTransformer((operation, context, ct) => IdempotentPosts.SetupOpenApi(operation, context));
+    options.AddOperationTransformer((operation, context, ct) => TraceGuid.SetupOpenApi(operation));
 
 #if (UseApiKey == true)
-    ApiKeyAuthentication.SetupSwaggerGen(options);
+    options.AddDocumentTransformer((document, context, ct) => ApiKeyAuthentication.SetupOpenApi(document));
 #elif (UseJwt == true)
-    JwtAuthentication.SetupSwaggerGen(options);
+    options.AddDocumentTransformer((document, context, ct) => JwtAuthentication.SetupOpenApi(document));
 #endif
 });
-
 
 // ----------------------------------------------------------------------------
 // Request pipeline
