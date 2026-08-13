@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Net;
 using System.Security.Principal;
 
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
