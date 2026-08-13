@@ -29,11 +29,18 @@ dotnet_diagnostic.CA1034.severity = none
 # CA1062: Validate arguments of public methods
 dotnet_diagnostic.CA1062.severity = none
 
+# CA1304: The behavior of 'string.ToLower()' could vary based on the current user's locale settings.
+dotnet_diagnostic.CA1304.severity = none
+
 # CA1305: Specify IFormatProvider
 dotnet_diagnostic.CA1305.severity = none
 
 # CA1310: Specify IFormatProvider
 dotnet_diagnostic.CA1310.severity = none
+
+# CA1311: Specify a culture or use an invariant version to avoid implicit dependency on current culture (MSSQL doesn't
+# like it when InvariantGlobalization>false</InvariantGlobalization> is set in the csproj).
+dotnet_diagnostic.CA1311.severity = none
 
 # CA1724: Type names should not match namespaces
 dotnet_diagnostic.CA1724.severity = none
