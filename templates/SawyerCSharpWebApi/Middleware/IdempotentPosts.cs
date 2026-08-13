@@ -6,7 +6,7 @@ using System.Security.Principal;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -226,7 +226,7 @@ public class IdempotentPosts : IMiddleware
                 Required = true,
                 Schema = new OpenApiSchema
                 {
-                    Type = "string"
+                    Type = JsonSchemaType.String
                 }
             });
         }

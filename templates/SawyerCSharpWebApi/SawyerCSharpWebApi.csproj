@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>true</InvariantGlobalization>
@@ -9,21 +9,24 @@
     <NoWarn>$(NoWarn);1591</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <UserSecretsId>d4a584ec-fad4-45aa-95c3-0cc43c683add</UserSecretsId>
-    <AnalysisMode>All</AnalysisMode>
+    <AnalysisMode>Recommended</AnalysisMode>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Asp.Versioning.Mvc" Version="8.0.0" />
-    <PackageReference Include="aspnetcore.healthchecks.ui.client" Version="8.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.0" />
+    <PackageReference Include="Asp.Versioning.Mvc" Version="10.2.1" />
+    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="10.2.1" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.11" />
+    <PackageReference Include="aspnetcore.healthchecks.ui.client" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.11" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.11" />
     <PackageReference Include="serilog.aspnetcore" Version="8.0.0" />
     <PackageReference Include="serilog.extensions.hosting" Version="8.0.0" />
     <PackageReference Include="serilog.settings.configuration" Version="8.0.0" />
     <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
     <PackageReference Include="serilog.sinks.console" Version="5.0.1" />
     <PackageReference Include="serilog.sinks.file" Version="5.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.2.3" />
   </ItemGroup>
 
 </Project>

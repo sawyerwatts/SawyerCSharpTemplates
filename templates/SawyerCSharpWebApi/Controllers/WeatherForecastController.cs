@@ -15,7 +15,10 @@ namespace SawyerCSharpWebApi;
 // Recall that multiple ApiVersion attributes can be attached to a controller,
 //      and that it has a Deprecated parameter.
 // Recall that the version can be attached to endpoints instead of controllers.
-public class WeatherForecastController : ControllerBase
+public class WeatherForecastController(
+    TraceGuid traceGuid,
+    ILogger<WeatherForecastController> logger)
+    : ControllerBase
 {
     private static readonly string[] Summaries =
     [
@@ -31,22 +34,11 @@ public class WeatherForecastController : ControllerBase
         "Scorching"
     ];
 
-    private readonly TraceGuid _traceGuid;
-    private readonly ILogger<WeatherForecastController> _logger;
-
-    public WeatherForecastController(
-        TraceGuid traceGuid,
-        ILogger<WeatherForecastController> logger)
-    {
-        _traceGuid = traceGuid;
-        _logger = logger;
-    }
-
     [HttpGet]
     public Task<ActionResult<IEnumerable<WeatherForecast>>> GetAsync(
         CancellationToken cancellationToken)
     {
-        _logger.LogInformation("{Dtm}", DateTime.Now.ToString());
+        logger.LogInformation("{Dtm}", DateTime.Now.ToString());
         ActionResult<IEnumerable<WeatherForecast>> resp = Ok(
             Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
@@ -63,8 +55,8 @@ public class WeatherForecastController : ControllerBase
         [FromBody] Foo foo,
         CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Request guid (again): {Guid}", _traceGuid.Value);
-        _logger.LogInformation("Instance has N value of {N}", foo.N);
+        logger.LogInformation("Request guid (again): {Guid}", traceGuid.Value);
+        logger.LogInformation("Instance has N value of {N}", foo.N);
         ActionResult<Foo> resp = Ok(foo);
         return Task.FromResult(resp);
     }
@@ -75,7 +67,7 @@ public class WeatherForecastController : ControllerBase
     {
         for (int i = 0; i < 5; i++)
         {
-            _logger.LogInformation("Demo 0: {Message}", msg);
+            logger.LogInformation("Demo 0: {Message}", msg);
             await Task.Delay(1000);
         }
 
@@ -88,7 +80,7 @@ public class WeatherForecastController : ControllerBase
     {
         for (int i = 0; i < 5; i++)
         {
-            _logger.LogInformation("Demo 1: {Message}", msg);
+            logger.LogInformation("Demo 1: {Message}", msg);
             await Task.Delay(1000);
         }
 

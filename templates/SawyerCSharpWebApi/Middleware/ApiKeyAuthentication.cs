@@ -8,7 +8,7 @@ using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -95,23 +95,14 @@ public class ApiKeyAuthentication
             Type = SecuritySchemeType.ApiKey,
             In = ParameterLocation.Header,
             Description = $"API key authorization header. Example: \"{Header}: {{token}}\"",
-            Scheme = "ApiKeyScheme",
+            Scheme = "apiKey",
         });
 
-        options.AddSecurityRequirement(new OpenApiSecurityRequirement
-        {
+        options.AddSecurityRequirement(doc =>
+            new OpenApiSecurityRequirement()
             {
-                new OpenApiSecurityScheme
-                {
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "apiKey",
-                    }
-                },
-                Array.Empty<string>()
-            }
-        });
+                [new OpenApiSecuritySchemeReference("apiKey", doc)] = []
+            });
     }
 
     public class Settings : AuthenticationSchemeOptions

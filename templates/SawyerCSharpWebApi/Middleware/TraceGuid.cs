@@ -1,9 +1,8 @@
-using System.ComponentModel.DataAnnotations;
 using System.Net;
 
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 using Serilog.Context;
 
@@ -145,7 +144,7 @@ public class TraceGuid
                 Required = false,
                 Schema = new OpenApiSchema
                 {
-                    Type = "string"
+                    Type = JsonSchemaType.String
                 }
             });
         }

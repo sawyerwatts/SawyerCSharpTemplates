@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -68,7 +68,7 @@ public static class JwtAuthentication
     public static void SetupSwaggerGen(
         SwaggerGenOptions options)
     {
-        options.AddSecurityDefinition("bearerAuth", new OpenApiSecurityScheme
+        options.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
         {
             Description = "JWT authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
             Name = "Authorization",
@@ -78,20 +78,11 @@ public static class JwtAuthentication
             BearerFormat = "JWT",
         });
 
-        options.AddSecurityRequirement(new OpenApiSecurityRequirement
-        {
+        options.AddSecurityRequirement(doc =>
+            new OpenApiSecurityRequirement()
             {
-                new OpenApiSecurityScheme
-                {
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "bearerAuth",
-                    }
-                },
-                Array.Empty<string>()
-            }
-        });
+                [new OpenApiSecuritySchemeReference("bearer", doc)] = []
+            });
     }
 
     public class Settings

@@ -1,11 +1,11 @@
 using System.Reflection;
 
+using Asp.Versioning;
+
 using HealthChecks.UI.Client;
 
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 using SawyerCSharpWebApi.HealthChecks;
 using SawyerCSharpWebApi.Middleware;
@@ -46,6 +46,7 @@ builder.Services
     .AddApiVersioning(options =>
     {
         options.ReportApiVersions = true;
+        options.ApiVersionReader = new UrlSegmentApiVersionReader();
     })
     // Added to ensure API version is checked (else, it's weirdly hit or miss):
     .AddMvc();
@@ -81,7 +82,10 @@ builder.Services.AddAuthorization(options =>
 });
 #endif
 
-builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddControllers();
+// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddOpenApi();
+
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo()
@@ -124,8 +128,13 @@ try
 
     if (app.Environment.IsDevelopment())
     {
-        app.UseSwagger();
-        app.UseSwaggerUI();
+        app.MapOpenApi();
+
+        app.UseSwaggerUI(options =>
+        {
+            options.SwaggerEndpoint("/openapi/v1.json", "v1");
+        });
+
     }
 
     app.UseHttpsRedirection();
@@ -165,6 +174,7 @@ try
             ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
         })
         .AllowAnonymous();
+
 
     app.Logger.LogInformation("Instantiating app services and running");
     app.Run();
